@@ -30,6 +30,12 @@ h1{font-size:1.65rem;line-height:1.15;margin:4px 0 2px;font-weight:800}
 .ayuda{padding:10px 12px;margin-bottom:10px;font-size:.86rem;color:var(--suave)}
 .ayuda b{color:var(--texto)}
 .tabla{overflow:hidden}
+.ctl{padding:10px 12px 12px;margin-bottom:10px}
+.ctl-t{font-size:.86rem;font-weight:700;margin:6px 0 6px}.ctl-t span{color:var(--suave);font-weight:400}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:6px}
+.seg button{min-height:42px;border-radius:12px;border:1px solid var(--borde);background:var(--btn);color:var(--texto);font:600 .9rem "Noto Sans",system-ui,sans-serif}
+.seg button[aria-pressed="true"]{background:var(--v50);color:#fff;border-color:var(--v50)}
+.reset{width:100%;min-height:44px;margin-top:8px;border-radius:12px;border:1px solid var(--batcrit);background:transparent;color:var(--batcrit);font:700 .92rem "Noto Sans",system-ui,sans-serif}
 .encab,.fila{display:grid;grid-template-columns:minmax(64px,1fr) 128px 132px;gap:5px;align-items:center;padding:6px 6px}
 .encab{font-size:.8rem;font-weight:700;color:var(--suave);border-bottom:1px solid var(--borde);padding-top:10px;padding-bottom:8px}
 .encab span:nth-child(2),.encab span:nth-child(3){text-align:center}
@@ -75,6 +81,14 @@ h1{font-size:1.65rem;line-height:1.15;margin:4px 0 2px;font-weight:800}
 
 <div class="card ayuda">Al terminar cada tramo de 10 km: con <b>− +</b> pon la <b>velocidad que llevaste</b> y el <b>% que marca el carro</b>. Lo que falta se recalcula solo. Si el carro marca lo mismo que la tabla, toca el número para confirmarlo.</div>
 
+<div class="card ctl">
+<div class="ctl-t">Aire acondicionado en la costa <span>(km 0–110)</span></div>
+<div class="seg" data-g="ac"><button data-v="0">Apagado</button><button data-v="1">Bajo</button><button data-v="2">Medio</button></div>
+<div class="ctl-t">Calefacción en la sierra <span>(km 110–232)</span></div>
+<div class="seg" data-g="cal"><button data-v="0">Apagada</button><button data-v="1">Baja</button><button data-v="2">Media</button></div>
+<button class="reset" id="reset1">Borrar todo y empezar de nuevo</button>
+</div>
+
 <div class="card tabla">
 <div class="encab"><span>Km</span><span>Velocidad</span><span>%Carga</span></div>
 <div id="filas"></div>
@@ -83,9 +97,10 @@ h1{font-size:1.65rem;line-height:1.15;margin:4px 0 2px;font-weight:800}
 <div class="card pie">
 <p><b>Curvas:</b> a cuánto bajar en las curvas cerradas del tramo.</p>
 <p><b>%Carga:</b> batería al terminar cada tramo (sale con 100 %). En verde, lo que marcó el carro.</p>
+<p><b>Aire y calefacción:</b> bajo ≈ 0,5 kW y medio ≈ 1 kW de aire; baja ≈ 0,6 kW y media ≈ 1,2 kW de calefacción. Cada hora con 1 kW encendido gasta cerca de 1,8 % de batería.</p>
 <p><b>Con lluvia:</b> 10 km/h menos. <b>Antes de curvas:</b> soltar el acelerador.</p>
 <p><b>Las señales de tránsito siempre mandan.</b></p>
-<div class="acc"><button id="reset">Borrar datos del viaje</button></div>
+<div class="acc"><button id="reset">Borrar todo y empezar de nuevo</button></div>
 <p class="nota">Cálculo: modelo físico de la ruta real (curvas, pendientes, altura), calibrado con el viaje real a Cuenca y el pronóstico del 19 de noviembre. Ábrela antes de salir: funciona sin señal y guarda lo que pongas.</p>
 </div>
 </main>
@@ -95,31 +110,37 @@ h1{font-size:1.65rem;line-height:1.15;margin:4px 0 2px;font-weight:800}
 </div></div>
 
 <script>
-const DATOS={"coef": [[1.8073, 0.0001414895059379473, 1.9466274703356952], [1.6823, 0.00011721421202095557, 7.962943454927785], [1.2035, 0.0001848068531764044, 20.517208805650284], [1.8441, 8.710977305384606e-05, 2.540187180365206], [1.5916, 0.00014636677465409387, 12.34924772181928], [1.2571, 0.00016151819430933314, 16.930900873350893], [1.7712, 0.00013327612362569086, 2.9416552370251465], [1.5336, 0.00016652164155149787, 17.08326718356168], [1.9583, 0.00016105815269086286, 16.97783672427292], [2.2549, 0.00017433374961238387, 20.05625482812329], [3.7473, 4.688037266987505e-05, 6.773684870283695], [4.0353, 7.53453053926173e-05, -6.181675424933516], [7.556, 2.7540948167897865e-05, 8.470478777385452], [4.5789, 0.00010872146333292443, 7.465215589905614], [6.4444, 5.154072257634496e-05, 20.30528103602984], [8.2117, 3.475445625911205e-05, 13.309252207497634], [4.172, 4.273378139060246e-05, 10.867800403306054], [5.8097, 7.52554882201258e-05, 20.106414261204744], [7.6491, 2.9615009381989482e-05, 18.845173808232573], [4.0693, 4.1604963861163847e-05, 6.333078377282995], [-2.7582, 3.888475079208085e-05, 12.576613969667509], [-0.3158, 9.020688113711584e-05, 19.515987175607826], [-1.7119, 3.204833861868679e-05, 21.588314981289365], [0.1083, -3.4841035691606304e-06, -0.10978928152497053]], "plan": [50, 65, 65, 60, 65, 65, 60, 65, 65, 65, 50, 50, 45, 50, 45, 40, 45, 50, 50, 50, 45, 50, 50, 40], "socplan": [100.0, 97.8, 95.5, 93.2, 91.0, 88.6, 86.4, 84.1, 81.6, 78.7, 75.4, 71.4, 67.3, 59.5, 54.5, 47.5, 38.9, 34.4, 28.0, 19.9, 15.6, 18.0, 17.7, 18.9, 18.8], "filas": [["0–10", "Guayaquil · Durán", "ciudad"], ["10–20", "", ""], ["20–30", "", ""], ["30–40", "Virgen de Fátima", "30"], ["40–50", "", ""], ["50–60", "", ""], ["60–70", "El Triunfo", "40"], ["70–80", "", ""], ["80–90", "", ""], ["90–100", "", ""], ["100–110", "Bucay", "40"], ["110–120", "Entra a la montaña", "30"], ["120–130", "Subida fuerte", "30–40"], ["130–140", "", "35"], ["140–150", "Pallatanga", "30"], ["150–160", "LA MÁS DURA · 6 %", "30"], ["160–170", "", "30"], ["170–180", "El Tablón", "35–40"], ["180–190", "Gatazo", "30"], ["190–200", "CUMBRE 3.861 m", "35"], ["200–210", "Bajada a Colta", "35"], ["210–220", "Colta · Cajabamba", "30"], ["220–230", "Calpi", "ciudad"], ["230–232", "Riobamba", "ciudad"]], "perfil": [[0.0, 6], [2.0, 10], [4.0, 5], [6.0, 5], [8.0, 5], [10.0, 5], [12.0, 4], [14.0, 1], [16.0, 5], [18.0, 4], [20.0, -4], [22.0, -1], [24.0, -2], [26.0, 2], [28.0, 8], [30.0, 8], [32.0, 6], [34.0, 12], [36.0, 15], [38.0, 12], [40.0, 16], [42.0, 16], [44.0, 20], [46.0, 24], [48.0, 23], [50.0, 21], [52.0, 23], [54.0, 24], [56.0, 29], [58.0, 35], [60.0, 37], [62.0, 39], [64.0, 42], [66.0, 41], [68.0, 45], [70.0, 54], [72.0, 56], [74.0, 62], [76.0, 74], [78.0, 80], [80.0, 90], [82.0, 103], [84.0, 120], [86.0, 136], [88.0, 156], [90.0, 159], [92.0, 158], [94.0, 182], [96.0, 206], [98.0, 236], [100.0, 277], [102.0, 317], [104.0, 317], [106.0, 350], [108.0, 393], [110.0, 472], [112.0, 534], [114.0, 490], [116.0, 586], [118.0, 673], [120.0, 611], [122.0, 743], [124.0, 870], [126.0, 998], [128.0, 1137], [130.0, 1129], [132.0, 1097], [134.0, 1162], [136.0, 1201], [138.0, 1284], [140.0, 1396], [142.0, 1411], [144.0, 1455], [146.0, 1560], [148.0, 1711], [150.0, 1860], [152.0, 1992], [154.0, 2151], [156.0, 2281], [158.0, 2318], [160.0, 2453], [162.0, 2548], [164.0, 2475], [166.0, 2472], [168.0, 2531], [170.0, 2642], [172.0, 2740], [174.0, 2884], [176.0, 2918], [178.0, 2936], [180.0, 3046], [182.0, 3147], [184.0, 3284], [186.0, 3408], [188.0, 3493], [190.0, 3602], [192.0, 3703], [194.0, 3817], [195.0, 3859], [197.0, 3821], [199.0, 3840], [201.0, 3771], [203.0, 3700], [205.0, 3574], [207.0, 3476], [209.0, 3369], [211.0, 3269], [213.0, 3199], [215.0, 3158], [217.0, 3123], [219.0, 3106], [221.0, 3065], [223.0, 3034], [225.0, 2922], [227.0, 2853], [229.0, 2801], [231.0, 2766], [232.1, 2757]]};
-const C=DATOS.coef, PLAN=DATOS.plan, F=DATOS.filas, N=F.length;
-const SK=0.08, SO=0.6, CLAVE='viaje-riobamba-v1';
-let st={vel:PLAN.slice(),real:Array(N).fill(null)};
-try{const g=JSON.parse(localStorage.getItem(CLAVE)||'null');if(g&&g.vel&&g.vel.length===N)st=g;}catch(e){}
+const DATOS={"mod": {"G": [[-0.23846, 0.00963], [0.23621, -0.00025], [-0.16198, 0.00373], [0.15447, 0.00189], [-0.00847, 0.00281], [0.12338, 8e-05], [0.03386, 0.00699], [0.30558, 0.00199], [0.81981, -0.00017], [1.14203, 0.00306], [2.18904, -0.00029], [1.96554, 0.0082], [6.01451, -0.00168], [2.8277, 0.00969], [5.24842, -0.00287], [6.66523, 0.00218], [2.53671, 0.00471], [4.22803, 0.00664], [6.24601, -0.00016], [2.39603, 0.00339], [-3.62091, 0.00046], [-1.29778, 0.00428], [-2.25923, -0.0017], [-0.21243, 0.00051]], "R": [[1.5391212108531702, 6.877292923837888e-05, -9.232228531027001], [1.4413853412970932, 0.00012166370548671987, -6.732869571065895], [1.3648302528196428, 0.00014000287415711507, -3.901442043725059], [1.5500043232648288, 7.375765908516807e-05, -9.699598731047056], [1.5142971753611147, 0.00010723171670834487, -10.873309594949253], [1.2775647490003224, 0.00015373523810255027, -4.17098532339397], [1.5342104832970629, 7.857929532511176e-05, -10.583613564633385], [1.2866428290546774, 0.00013551496958459115, -4.634653653151634], [1.1673190003474798, 0.00015726630121566085, -1.2726566424402803], [1.3444986408343602, 0.00012785973399029156, -6.280825204136946], [1.6392801263786472, 2.8480728188410268e-05, -12.83001619831379], [1.7175780293433358, 1.621673644147545e-05, -15.853761664768772], [1.6588546790351821, 2.1459604276204445e-05, -10.866770016474883], [1.4393862817786403, 2.987622625945565e-05, -5.316708880029704], [1.4384775579114215, 5.1941075780680555e-05, -3.192106342047975], [1.47730457294572, 2.5502222239238237e-06, -2.8008163409575544], [1.3734915090919053, 5.321694885056213e-06, -2.041595607502865], [1.544082261987144, 5.581816407072432e-07, -4.4864357764716205], [1.5731111600783252, 1.3345935680324677e-05, -5.169374468869088], [1.540337606247266, 4.2672760769012336e-06, -12.040243480476079], [1.1036559154686054, 1.924466577988275e-05, -8.8772104812661], [1.0652498122898155, 4.6910507279268e-05, -1.5294818063605762], [0.8596033323166598, 3.0866485394223424e-05, 2.4504808820007993], [0.2329587969422296, -2.9228521926955104e-06, -0.5450328800797651]], "A": [[0.11546213577792981, 10.764820905796757], [0.008964342859791103, 14.253102804300697], [-0.0065303273412015694, 14.93486857169565], [0.10756937569136428, 10.246872016378457], [0.0343442347127932, 12.45571194108003], [-0.007285864480712982, 14.032429192254899], [0.0644384373370862, 8.499906464586493], [-0.003606284811671037, 11.730684550287696], [-0.001532818216253356, 11.729680409007955], [-0.013636111683631266, 12.01539059951876], [0.10030778988708813, 8.559385023646824], [0.08513104067655478, 9.905604633763069], [0.056208902971394734, 10.97945389535594], [0.05211104628033846, 11.398832488661945], [0.040963639880118675, 12.022189312604104], [0.1069752195544786, 9.177031668580078], [0.0559468168571588, 11.53738479205402], [0.0476896608540291, 11.834824909070722], [-0.04587057289188296, 15.235643227788675], [-0.028428731595560062, 12.646699744691567], [-0.006409197887436135, 11.754181246530377], [-0.0895485412847556, 16.05738441572889], [-0.0057449567871186704, 13.199546658463998], [0.016792223538418465, 2.426089289092987]], "H": [[0.08249331725364215, 7.367667438326402], [0.009976053214873683, 9.616356665225647], [0.004917595315163765, 9.80425264951727], [0.08190156510652605, 7.2121532320478074], [0.02283848064652995, 9.162945772482733], [-1.1716069292757285e-15, 10.000000000000062], [0.03568372559376431, 8.611982559109652], [0.004318514144955736, 9.824021478215203], [3.8259420096370174e-05, 9.998362357627714], [0.00363978405849371, 9.848011004706688], [0.09387985531254478, 6.659370091403155], [0.08349662726781275, 6.91133799242384], [0.08888873258817127, 6.670186255658782], [0.07944035761955477, 6.992284021481833], [0.07087444485112483, 7.442511335481646], [0.12944201686063803, 5.251241584779932], [0.09565442284815039, 6.4142266311221645], [0.08003076994224939, 6.891707014694628], [0.06416800202344335, 7.56184994050945], [0.07748626806269417, 7.021338908325441], [0.07598746546649815, 7.057715972853966], [0.032793380851559084, 8.703018762444213], [0.12201109972792602, 5.669659296561713], [0.04440469815249212, 0.6011480622215072]]}, "plan": [50, 65, 65, 60, 65, 65, 60, 65, 65, 65, 50, 50, 45, 50, 45, 40, 45, 50, 50, 50, 45, 50, 50, 40], "filas": [["0–10", "Guayaquil · Durán", "ciudad"], ["10–20", "", ""], ["20–30", "", ""], ["30–40", "Virgen de Fátima", "30"], ["40–50", "", ""], ["50–60", "", ""], ["60–70", "El Triunfo", "40"], ["70–80", "", ""], ["80–90", "", ""], ["90–100", "", ""], ["100–110", "Bucay", "40"], ["110–120", "Entra a la montaña", "30"], ["120–130", "Subida fuerte", "30–40"], ["130–140", "", "35"], ["140–150", "Pallatanga", "30"], ["150–160", "LA MÁS DURA · 6 %", "30"], ["160–170", "", "30"], ["170–180", "El Tablón", "35–40"], ["180–190", "Gatazo", "30"], ["190–200", "CUMBRE 3.861 m", "35"], ["200–210", "Bajada a Colta", "35"], ["210–220", "Colta · Cajabamba", "30"], ["220–230", "Calpi", "ciudad"], ["230–232", "Riobamba", "ciudad"]], "perfil": [[0.0, 6], [2.0, 10], [4.0, 5], [6.0, 5], [8.0, 5], [10.0, 5], [12.0, 4], [14.0, 1], [16.0, 5], [18.0, 4], [20.0, -4], [22.0, -1], [24.0, -2], [26.0, 2], [28.0, 8], [30.0, 8], [32.0, 6], [34.0, 12], [36.0, 15], [38.0, 12], [40.0, 16], [42.0, 16], [44.0, 20], [46.0, 24], [48.0, 23], [50.0, 21], [52.0, 23], [54.0, 24], [56.0, 29], [58.0, 35], [60.0, 37], [62.0, 39], [64.0, 42], [66.0, 41], [68.0, 45], [70.0, 54], [72.0, 56], [74.0, 62], [76.0, 74], [78.0, 80], [80.0, 90], [82.0, 103], [84.0, 120], [86.0, 136], [88.0, 156], [90.0, 159], [92.0, 158], [94.0, 182], [96.0, 206], [98.0, 236], [100.0, 277], [102.0, 317], [104.0, 317], [106.0, 350], [108.0, 393], [110.0, 472], [112.0, 534], [114.0, 490], [116.0, 586], [118.0, 673], [120.0, 611], [122.0, 743], [124.0, 870], [126.0, 998], [128.0, 1137], [130.0, 1129], [132.0, 1097], [134.0, 1162], [136.0, 1201], [138.0, 1284], [140.0, 1396], [142.0, 1411], [144.0, 1455], [146.0, 1560], [148.0, 1711], [150.0, 1860], [152.0, 1992], [154.0, 2151], [156.0, 2281], [158.0, 2318], [160.0, 2453], [162.0, 2548], [164.0, 2475], [166.0, 2472], [168.0, 2531], [170.0, 2642], [172.0, 2740], [174.0, 2884], [176.0, 2918], [178.0, 2936], [180.0, 3046], [182.0, 3147], [184.0, 3284], [186.0, 3408], [188.0, 3493], [190.0, 3602], [192.0, 3703], [194.0, 3817], [195.0, 3859], [197.0, 3821], [199.0, 3840], [201.0, 3771], [203.0, 3700], [205.0, 3574], [207.0, 3476], [209.0, 3369], [211.0, 3269], [213.0, 3199], [215.0, 3158], [217.0, 3123], [219.0, 3106], [221.0, 3065], [223.0, 3034], [225.0, 2922], [227.0, 2853], [229.0, 2801], [231.0, 2766], [232.1, 2757]]};
+const MD=DATOS.mod, PLAN=DATOS.plan, F=DATOS.filas, N=F.length;
+const EU=54.5, PAC=[0,0.5,1.0], PCAL=[0,0.6,1.2], COSTA=10;          // kW; tramos 0..10 = costa
+const SA=0.04, SB=0.20, SD=2.5, SR=0.3, CLAVE='viaje-riobamba-v2';
+const nuevo=()=>({vel:PLAN.slice(),real:Array(N).fill(null),ac:0,cal:0,cong:Array(N).fill(null)});
+let st=nuevo();
+try{const g=JSON.parse(localStorage.getItem(CLAVE)||'null');if(g&&g.vel&&g.vel.length===N&&g.cong)st=g;}catch(e){}
 const guardar=()=>{try{localStorage.setItem(CLAVE,JSON.stringify(st))}catch(e){}};
-const delta=(t,v)=>{const[a,b,c]=C[t];return a+b*v*v+c/v;};
 const fmt=x=>(Math.round(x*10)/10).toLocaleString('es',{minimumFractionDigits:1,maximumFractionDigits:1});
-
+// gasto del tramo t (puntos de %): subir (g), rodadura y aire (r), accesorios + aire/calefacción (x)
+function comp(t){const v=st.vel[t],G=MD.G[t],R=MD.R[t],A=MD.A[t],H=MD.H[t];
+  const cfg=st.cong[t]||{ac:st.ac,cal:st.cal};
+  const g=G[0]+G[1]*v, r=R[0]+R[1]*v*v+R[2]/v, h=Math.max(0.02,H[0]+H[1]/v);
+  const kw=t<=COSTA?PAC[cfg.ac]:PCAL[cfg.cal];
+  return{g,r,x:A[0]+A[1]/v+kw*h/EU*100};}
 function calcular(){
   let j=-1;for(let t=0;t<N;t++)if(st.real[t]!=null)j=t;
-  let k=1;
-  if(j>=0){let x=0,neg=0;for(let t=0;t<=j;t++){const d=delta(t,st.vel[t]);if(d>0)x+=d;else neg+=d;}
-    const y=(100-st.real[j])+neg;
-    k=(1/(SK*SK)+x*y/(SO*SO))/(1/(SK*SK)+x*x/(SO*SO));k=Math.max(0.6,Math.min(1.6,k));}
-  const soc=[];let ant=100;
+  let a=0,b=0;
+  if(j>=0){let S=0,Rs=0;for(let t=0;t<=j;t++){const c=comp(t);S+=c.g+c.r+c.x;Rs+=c.r;}
+    const y=(100-st.real[j])-S, den=S*S*SA*SA+Rs*Rs*SB*SB+SR*SR+SD*SD;
+    a=Math.max(-0.15,Math.min(0.25,SA*SA*S*y/den)); b=Math.max(-0.5,Math.min(1.0,SB*SB*Rs*y/den));}
+  const soc=[];let ant=100,fut=0,futBase=0;
   for(let t=0;t<N;t++){
-    if(st.real[t]!=null){soc[t]=st.real[t];}
-    else{const d=delta(t,st.vel[t]);soc[t]=ant-(d>0?k*d:d);}
+    if(st.real[t]!=null)soc[t]=st.real[t];
+    else{const c=comp(t),d=(1+a)*(c.g+c.x)+(1+a)*(1+b)*c.r;soc[t]=ant-d;if(t>j){fut+=d;futBase+=c.g+c.r+c.x;}}
     ant=soc[t];}
-  return{soc,k,j};
+  return{soc,j,extra:futBase>0?(fut/futBase-1):0};
 }
 const colVel=v=>v>=65?'65':v>=60?'60':v>=50?'50':v>=45?'45':'40';
 function pinta(){
-  const{soc,k,j}=calcular();
+  const{soc,j,extra}=calcular();
   const cont=document.getElementById('filas');
   if(!cont.children.length){
     F.forEach((f,t)=>{const d=document.createElement('div');d.className='fila';d.innerHTML=
@@ -139,13 +160,14 @@ function pinta(){
     const nivel=Math.max(0,Math.min(100,s)),col=s<10?'var(--batcrit)':s<25?'var(--batbajo)':'var(--bat)';
     document.getElementById('b'+t).innerHTML=`<span class="bat"><i style="width:${(27*nivel/100).toFixed(1)}px;background:${col}"></i></span>`+(r?'<span class="r">✓ real</span>':(t<j?'':'previsto'));
   }
+  document.querySelectorAll('.seg').forEach(g=>g.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.v===st[g.dataset.g]))));
   const cum=soc[18]-0.88*(soc[18]-soc[19]),fin=soc[N-1];
   let mn=Infinity;for(let t=Math.max(j,0);t<N;t++)mn=Math.min(mn,soc[t]);
   document.getElementById('rcum').textContent=fmt(Math.max(cum,0))+' %';
   document.getElementById('rfin').textContent=fmt(Math.max(fin,0))+' %';
   const e=document.getElementById('estado');let txt,cl;
-  const dif=Math.round((k-1)*100);
-  const gasto=j<0?'Según lo previsto.':(Math.abs(dif)<2?'Vas gastando lo previsto.':`Vas gastando ${Math.abs(dif)} % ${dif>0?'más':'menos'} de lo previsto.`);
+  const dif=Math.round(extra*100);
+  const gasto=j<0?'Según lo previsto.':(Math.abs(dif)<2?'Vas según lo previsto.':`Con lo que marca el carro, el resto gastaría ${Math.abs(dif)} % ${dif>0?'más':'menos'} de lo previsto.`);
   if(mn<0){txt=gasto+' ⚠ Así no alcanza: baja la velocidad.';cl='mal';}
   else if(mn<5){txt=gasto+' ⚠ Muy justo: baja la velocidad.';cl='mal';}
   else if(mn<10){txt=gasto+' Margen chico: maneja más suave.';cl='aviso';}
@@ -159,9 +181,13 @@ document.getElementById('filas').addEventListener('click',ev=>{
   else if(a==='v+')st.vel[t]=Math.min(100,st.vel[t]+5);
   else if(a==='c-'||a==='c+'){const base=st.real[t]!=null?st.real[t]:Math.round(soc[t]);st.real[t]=Math.max(0,Math.min(100,base+(a==='c+'?1:-1)));}
   else if(a==='ok'){if(st.real[t]!=null){if(confirm('¿Borrar el dato real de este tramo?'))st.real[t]=null;}else st.real[t]=Math.max(0,Math.min(100,Math.round(soc[t])));}
+  for(let u=0;u<N;u++){if(st.real[u]!=null){for(let w=0;w<=u;w++)if(!st.cong[w])st.cong[w]={ac:st.ac,cal:st.cal};}}
+  let ult=-1;for(let u=0;u<N;u++)if(st.real[u]!=null)ult=u;for(let u=ult+1;u<N;u++)st.cong[u]=null;
   guardar();pinta();
 });
-document.getElementById('reset').onclick=()=>{if(confirm('¿Borrar todas las velocidades y cargas que pusiste?')){st={vel:PLAN.slice(),real:Array(N).fill(null)};guardar();pinta();}};
+const reiniciar=()=>{if(confirm('¿Borrar todo lo que pusiste (velocidades, cargas, aire y calefacción)?')){st=nuevo();guardar();pinta();}};
+document.getElementById('reset').onclick=reiniciar;document.getElementById('reset1').onclick=reiniciar;
+document.querySelectorAll('.seg').forEach(g=>g.addEventListener('click',ev=>{const b=ev.target.closest('button');if(!b)return;st[g.dataset.g]=+b.dataset.v;guardar();pinta();}));
 document.getElementById('tema').onclick=()=>{const r=document.documentElement;r.dataset.tema=r.dataset.tema==='oscuro'?'claro':'oscuro';try{localStorage.setItem(CLAVE+'-tema',r.dataset.tema)}catch(e){}};
 try{const t=localStorage.getItem(CLAVE+'-tema');if(t)document.documentElement.dataset.tema=t}catch(e){}
 function perfil(){const s=document.getElementById('perfil'),P=DATOS.perfil,W=s.clientWidth||340,H=150,L=50,R=8,T=24,B=8;
