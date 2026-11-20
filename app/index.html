@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="es" data-tema="oscuro"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Batería en ruta · Riobamba</title>
+<meta name="description" content="Recalcula la batería del Deepal S05 tramo a tramo de Guayaquil a Riobamba.">
+<meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f4f3ee" media="(prefers-color-scheme: light)">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--fondo:#f4f3ee;--tarj:#ffffff;--tarj2:#f3f6fb;--texto:#17181a;--suave:#55575c;--borde:#dcdad2;--acento:#1c5cab;--rojo:#b3261e;--ok:#0c7a3e;--aviso:#a35a00;
+ --v65:#86b6ef;--v60:#5598e7;--v50:#2a78d6;--v45:#1c5cab;--v40:#0d366b;--t65:#17181a;--t60:#17181a;--t50:#fff;--t45:#fff;--t40:#fff;--bat:#2a78d6;--batbajo:#d95926;--batcrit:#d03b3b;--btn:#e9e8e2}
+@media (prefers-color-scheme: dark){:root:not([data-tema="claro"]){--fondo:#0f1115;--tarj:#171a21;--tarj2:#1c2029;--texto:#eceef2;--suave:#a6abb6;--borde:#2b303b;--acento:#86b6ef;--rojo:#ff8a80;--ok:#5fd39a;--aviso:#ffb74d;
+ --v65:#9ec5f4;--v60:#6da7ec;--v50:#3987e5;--v45:#256abf;--v40:#184f95;--t65:#0f1115;--t60:#0f1115;--t50:#fff;--t45:#fff;--t40:#fff;--bat:#5598e7;--batbajo:#ff9a62;--batcrit:#ff6b6b;--btn:#252a35}}
+:root[data-tema="oscuro"]{--fondo:#0f1115;--tarj:#171a21;--tarj2:#1c2029;--texto:#eceef2;--suave:#a6abb6;--borde:#2b303b;--acento:#86b6ef;--rojo:#ff8a80;--ok:#5fd39a;--aviso:#ffb74d;
+ --v65:#9ec5f4;--v60:#6da7ec;--v50:#3987e5;--v45:#256abf;--v40:#184f95;--t65:#0f1115;--t60:#0f1115;--t50:#fff;--t45:#fff;--t40:#fff;--bat:#5598e7;--batbajo:#ff9a62;--batcrit:#ff6b6b;--btn:#252a35}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--fondo);color:var(--texto);font:16px/1.4 "Noto Sans",system-ui,-apple-system,Roboto,sans-serif;padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+main{max-width:640px;margin:0 auto;padding:10px 8px 20px}
+.cab{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;padding:6px 4px 0}
+h1{font-size:1.65rem;line-height:1.15;margin:4px 0 2px;font-weight:800}
+.sub1{color:var(--acento);font-weight:700;font-size:1.08rem;margin:2px 0}
+.sub2{color:var(--suave);font-size:.82rem;margin:2px 0 10px}
+.tema{min-height:40px;min-width:40px;border-radius:12px;border:1px solid var(--borde);background:var(--tarj);color:var(--texto);font-size:1.1rem}
+.card{background:var(--tarj);border:1px solid var(--borde);border-radius:18px}
+.perfil{padding:8px 6px 4px;margin-bottom:10px}
+.perfil svg{display:block;width:100%;height:150px}
+.ayuda{padding:10px 12px;margin-bottom:10px;font-size:.86rem;color:var(--suave)}
+.ayuda b{color:var(--texto)}
+.tabla{overflow:hidden}
+.encab,.fila{display:grid;grid-template-columns:minmax(64px,1fr) 128px 132px;gap:5px;align-items:center;padding:6px 6px}
+.encab{font-size:.8rem;font-weight:700;color:var(--suave);border-bottom:1px solid var(--borde);padding-top:10px;padding-bottom:8px}
+.encab span:nth-child(2),.encab span:nth-child(3){text-align:center}
+.fila:nth-child(odd){background:var(--tarj2)}
+.fila.realf{box-shadow:inset 4px 0 0 var(--ok)}
+.km{font-weight:700;font-size:1rem;font-variant-numeric:tabular-nums}
+.lug{font-size:.78rem;color:var(--suave);line-height:1.2;margin-top:1px}
+.lug.dura{color:var(--rojo);font-weight:800}.lug.cum{color:var(--texto);font-weight:800}
+.paso{display:flex;align-items:center;justify-content:center;gap:3px}
+.paso button.pm{width:32px;min-height:40px;border-radius:10px;border:1px solid var(--borde);background:var(--btn);color:var(--texto);font-size:1.3rem;font-weight:700;line-height:1;padding:0;touch-action:manipulation}
+.paso button.pm:active{transform:scale(.94)}
+.pill{width:58px;height:34px;border-radius:17px;display:flex;align-items:baseline;justify-content:center;gap:2px;padding-top:7px;font-weight:800;font-size:1rem;font-variant-numeric:tabular-nums;white-space:nowrap}.pill small{font-size:.75rem;font-weight:700}
+.pill.cambio{outline:2px solid var(--aviso);outline-offset:2px}
+.val{min-width:62px;min-height:40px;border:0;border-radius:10px;background:transparent;color:var(--texto);font:800 1rem "Noto Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums;padding:0 2px}
+.val.real{color:var(--ok)}
+.bajo{font-size:.72rem;color:var(--suave);text-align:center;margin-top:2px;min-height:14px;display:flex;align-items:center;justify-content:center;gap:5px}
+.bajo .r{color:var(--ok);font-weight:700}
+.bat{width:30px;height:12px;border:1.5px solid var(--suave);border-radius:3px;position:relative;display:inline-block}
+.bat:after{content:"";position:absolute;right:-4px;top:3px;width:2px;height:4px;background:var(--suave);border-radius:1px}
+.bat i{position:absolute;left:1.5px;top:1.5px;bottom:1.5px;border-radius:1px;background:var(--bat)}
+.pie{padding:12px;margin-top:10px;font-size:.86rem;line-height:1.5}
+.pie p{margin:4px 0}
+.acc{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.acc button{min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--borde);background:var(--tarj);color:var(--texto);font:600 .9rem "Noto Sans",system-ui,sans-serif}
+.nota{font-size:.75rem;color:var(--suave);margin-top:10px}
+.barra{position:fixed;left:0;right:0;bottom:0;background:var(--tarj);border-top:1px solid var(--borde);padding:8px 12px calc(8px + env(safe-area-inset-bottom));z-index:9}
+.barra .in{max-width:640px;margin:0 auto}
+.res{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.res b{font-size:1.15rem;font-variant-numeric:tabular-nums}
+.estado{font-size:.82rem;margin-top:3px}
+.estado.ok{color:var(--ok)}.estado.aviso{color:var(--aviso)}.estado.mal{color:var(--batcrit)}
+@media (max-width:374px){.encab,.fila{grid-template-columns:minmax(60px,1fr) 116px 118px;gap:4px}.paso button.pm{width:28px}.pill{width:54px}.val{min-width:56px;font-size:.95rem}}
+@media (min-width:430px){.encab,.fila{grid-template-columns:1fr 140px 146px}.paso button.pm{width:36px}}
+</style></head><body>
+<main>
+<div class="cab"><div>
+<h1>Guayaquil → Riobamba</h1>
+<div class="sub1">Velocidad para ahorrar batería</div>
+<div class="sub2">Deepal S05 · 3 personas · salir 7:00 con 100 % · ruta por Pallatanga</div>
+</div><button class="tema" id="tema" aria-label="Cambiar entre claro y oscuro">◐</button></div>
+
+<div class="card perfil"><svg id="perfil" height="150" aria-label="Perfil de altura de la ruta"></svg></div>
+
+<div class="card ayuda">Al terminar cada tramo de 10 km: con <b>− +</b> pon la <b>velocidad que llevaste</b> y el <b>% que marca el carro</b>. Lo que falta se recalcula solo. Si el carro marca lo mismo que la tabla, toca el número para confirmarlo.</div>
+
+<div class="card tabla">
+<div class="encab"><span>Km</span><span>Velocidad</span><span>%Carga</span></div>
+<div id="filas"></div>
+</div>
+
+<div class="card pie">
+<p><b>Curvas:</b> a cuánto bajar en las curvas cerradas del tramo.</p>
+<p><b>%Carga:</b> batería al terminar cada tramo (sale con 100 %). En verde, lo que marcó el carro.</p>
+<p><b>Con lluvia:</b> 10 km/h menos. <b>Antes de curvas:</b> soltar el acelerador.</p>
+<p><b>Las señales de tránsito siempre mandan.</b></p>
+<div class="acc"><button id="reset">Borrar datos del viaje</button></div>
+<p class="nota">Cálculo: modelo físico de la ruta real (curvas, pendientes, altura), calibrado con el viaje real a Cuenca y el pronóstico del 19 de noviembre. Ábrela antes de salir: funciona sin señal y guarda lo que pongas.</p>
+</div>
+</main>
+<div class="barra"><div class="in">
+<div class="res"><span>Cumbre ≈ <b id="rcum">16 %</b></span><span>Riobamba ≈ <b id="rfin">19 %</b></span></div>
+<div class="estado ok" id="estado">Según lo previsto.</div>
+</div></div>
+
+<script>
+const DATOS={"coef": [[1.8073, 0.0001414895059379473, 1.9466274703356952], [1.6823, 0.00011721421202095557, 7.962943454927785], [1.2035, 0.0001848068531764044, 20.517208805650284], [1.8441, 8.710977305384606e-05, 2.540187180365206], [1.5916, 0.00014636677465409387, 12.34924772181928], [1.2571, 0.00016151819430933314, 16.930900873350893], [1.7712, 0.00013327612362569086, 2.9416552370251465], [1.5336, 0.00016652164155149787, 17.08326718356168], [1.9583, 0.00016105815269086286, 16.97783672427292], [2.2549, 0.00017433374961238387, 20.05625482812329], [3.7473, 4.688037266987505e-05, 6.773684870283695], [4.0353, 7.53453053926173e-05, -6.181675424933516], [7.556, 2.7540948167897865e-05, 8.470478777385452], [4.5789, 0.00010872146333292443, 7.465215589905614], [6.4444, 5.154072257634496e-05, 20.30528103602984], [8.2117, 3.475445625911205e-05, 13.309252207497634], [4.172, 4.273378139060246e-05, 10.867800403306054], [5.8097, 7.52554882201258e-05, 20.106414261204744], [7.6491, 2.9615009381989482e-05, 18.845173808232573], [4.0693, 4.1604963861163847e-05, 6.333078377282995], [-2.7582, 3.888475079208085e-05, 12.576613969667509], [-0.3158, 9.020688113711584e-05, 19.515987175607826], [-1.7119, 3.204833861868679e-05, 21.588314981289365], [0.1083, -3.4841035691606304e-06, -0.10978928152497053]], "plan": [50, 65, 65, 60, 65, 65, 60, 65, 65, 65, 50, 50, 45, 50, 45, 40, 45, 50, 50, 50, 45, 50, 50, 40], "socplan": [100.0, 97.8, 95.5, 93.2, 91.0, 88.6, 86.4, 84.1, 81.6, 78.7, 75.4, 71.4, 67.3, 59.5, 54.5, 47.5, 38.9, 34.4, 28.0, 19.9, 15.6, 18.0, 17.7, 18.9, 18.8], "filas": [["0–10", "Guayaquil · Durán", "ciudad"], ["10–20", "", ""], ["20–30", "", ""], ["30–40", "Virgen de Fátima", "30"], ["40–50", "", ""], ["50–60", "", ""], ["60–70", "El Triunfo", "40"], ["70–80", "", ""], ["80–90", "", ""], ["90–100", "", ""], ["100–110", "Bucay", "40"], ["110–120", "Entra a la montaña", "30"], ["120–130", "Subida fuerte", "30–40"], ["130–140", "", "35"], ["140–150", "Pallatanga", "30"], ["150–160", "LA MÁS DURA · 6 %", "30"], ["160–170", "", "30"], ["170–180", "El Tablón", "35–40"], ["180–190", "Gatazo", "30"], ["190–200", "CUMBRE 3.861 m", "35"], ["200–210", "Bajada a Colta", "35"], ["210–220", "Colta · Cajabamba", "30"], ["220–230", "Calpi", "ciudad"], ["230–232", "Riobamba", "ciudad"]], "perfil": [[0.0, 6], [2.0, 10], [4.0, 5], [6.0, 5], [8.0, 5], [10.0, 5], [12.0, 4], [14.0, 1], [16.0, 5], [18.0, 4], [20.0, -4], [22.0, -1], [24.0, -2], [26.0, 2], [28.0, 8], [30.0, 8], [32.0, 6], [34.0, 12], [36.0, 15], [38.0, 12], [40.0, 16], [42.0, 16], [44.0, 20], [46.0, 24], [48.0, 23], [50.0, 21], [52.0, 23], [54.0, 24], [56.0, 29], [58.0, 35], [60.0, 37], [62.0, 39], [64.0, 42], [66.0, 41], [68.0, 45], [70.0, 54], [72.0, 56], [74.0, 62], [76.0, 74], [78.0, 80], [80.0, 90], [82.0, 103], [84.0, 120], [86.0, 136], [88.0, 156], [90.0, 159], [92.0, 158], [94.0, 182], [96.0, 206], [98.0, 236], [100.0, 277], [102.0, 317], [104.0, 317], [106.0, 350], [108.0, 393], [110.0, 472], [112.0, 534], [114.0, 490], [116.0, 586], [118.0, 673], [120.0, 611], [122.0, 743], [124.0, 870], [126.0, 998], [128.0, 1137], [130.0, 1129], [132.0, 1097], [134.0, 1162], [136.0, 1201], [138.0, 1284], [140.0, 1396], [142.0, 1411], [144.0, 1455], [146.0, 1560], [148.0, 1711], [150.0, 1860], [152.0, 1992], [154.0, 2151], [156.0, 2281], [158.0, 2318], [160.0, 2453], [162.0, 2548], [164.0, 2475], [166.0, 2472], [168.0, 2531], [170.0, 2642], [172.0, 2740], [174.0, 2884], [176.0, 2918], [178.0, 2936], [180.0, 3046], [182.0, 3147], [184.0, 3284], [186.0, 3408], [188.0, 3493], [190.0, 3602], [192.0, 3703], [194.0, 3817], [195.0, 3859], [197.0, 3821], [199.0, 3840], [201.0, 3771], [203.0, 3700], [205.0, 3574], [207.0, 3476], [209.0, 3369], [211.0, 3269], [213.0, 3199], [215.0, 3158], [217.0, 3123], [219.0, 3106], [221.0, 3065], [223.0, 3034], [225.0, 2922], [227.0, 2853], [229.0, 2801], [231.0, 2766], [232.1, 2757]]};
+const C=DATOS.coef, PLAN=DATOS.plan, F=DATOS.filas, N=F.length;
+const SK=0.08, SO=0.6, CLAVE='viaje-riobamba-v1';
+let st={vel:PLAN.slice(),real:Array(N).fill(null)};
+try{const g=JSON.parse(localStorage.getItem(CLAVE)||'null');if(g&&g.vel&&g.vel.length===N)st=g;}catch(e){}
+const guardar=()=>{try{localStorage.setItem(CLAVE,JSON.stringify(st))}catch(e){}};
+const delta=(t,v)=>{const[a,b,c]=C[t];return a+b*v*v+c/v;};
+const fmt=x=>(Math.round(x*10)/10).toLocaleString('es',{minimumFractionDigits:1,maximumFractionDigits:1});
+
+function calcular(){
+  let j=-1;for(let t=0;t<N;t++)if(st.real[t]!=null)j=t;
+  let k=1;
+  if(j>=0){let x=0,neg=0;for(let t=0;t<=j;t++){const d=delta(t,st.vel[t]);if(d>0)x+=d;else neg+=d;}
+    const y=(100-st.real[j])+neg;
+    k=(1/(SK*SK)+x*y/(SO*SO))/(1/(SK*SK)+x*x/(SO*SO));k=Math.max(0.6,Math.min(1.6,k));}
+  const soc=[];let ant=100;
+  for(let t=0;t<N;t++){
+    if(st.real[t]!=null){soc[t]=st.real[t];}
+    else{const d=delta(t,st.vel[t]);soc[t]=ant-(d>0?k*d:d);}
+    ant=soc[t];}
+  return{soc,k,j};
+}
+const colVel=v=>v>=65?'65':v>=60?'60':v>=50?'50':v>=45?'45':'40';
+function pinta(){
+  const{soc,k,j}=calcular();
+  const cont=document.getElementById('filas');
+  if(!cont.children.length){
+    F.forEach((f,t)=>{const d=document.createElement('div');d.className='fila';d.innerHTML=
+      `<div><div class="km">${f[0]}</div><div class="lug${f[1].startsWith('LA MÁS')?' dura':f[1].startsWith('CUMBRE')?' cum':''}">${f[1]||'&nbsp;'}</div></div>
+       <div><div class="paso"><button class="pm" data-t="${t}" data-a="v-" aria-label="Bajar velocidad">−</button><div class="pill" id="p${t}"></div><button class="pm" data-t="${t}" data-a="v+" aria-label="Subir velocidad">+</button></div>
+       <div class="bajo">${f[2]?(f[2]==='ciudad'?'ciudad':'curvas '+f[2]):'&nbsp;'}</div></div>
+       <div><div class="paso"><button class="pm" data-t="${t}" data-a="c-" aria-label="Bajar carga">−</button><button class="val" id="c${t}" data-t="${t}" data-a="ok"></button><button class="pm" data-t="${t}" data-a="c+" aria-label="Subir carga">+</button></div>
+       <div class="bajo" id="b${t}"></div></div>`;cont.appendChild(d);});
+  }
+  for(let t=0;t<N;t++){
+    const v=st.vel[t],p=document.getElementById('p'+t),cv=colVel(v);
+    p.innerHTML=v+'<small> km/h</small>';p.style.background=`var(--v${cv})`;p.style.color=`var(--t${cv})`;
+    p.classList.toggle('cambio',v!==PLAN[t]);
+    const c=document.getElementById('c'+t),s=soc[t],r=st.real[t]!=null;
+    c.textContent=(r?Math.round(s):fmt(Math.max(s,0)))+' %';c.classList.toggle('real',r);
+    c.parentElement.parentElement.parentElement.classList.toggle('realf',r);
+    const nivel=Math.max(0,Math.min(100,s)),col=s<10?'var(--batcrit)':s<25?'var(--batbajo)':'var(--bat)';
+    document.getElementById('b'+t).innerHTML=`<span class="bat"><i style="width:${(27*nivel/100).toFixed(1)}px;background:${col}"></i></span>`+(r?'<span class="r">✓ real</span>':(t<j?'':'previsto'));
+  }
+  const cum=soc[18]-0.88*(soc[18]-soc[19]),fin=soc[N-1];
+  let mn=Infinity;for(let t=Math.max(j,0);t<N;t++)mn=Math.min(mn,soc[t]);
+  document.getElementById('rcum').textContent=fmt(Math.max(cum,0))+' %';
+  document.getElementById('rfin').textContent=fmt(Math.max(fin,0))+' %';
+  const e=document.getElementById('estado');let txt,cl;
+  const dif=Math.round((k-1)*100);
+  const gasto=j<0?'Según lo previsto.':(Math.abs(dif)<2?'Vas gastando lo previsto.':`Vas gastando ${Math.abs(dif)} % ${dif>0?'más':'menos'} de lo previsto.`);
+  if(mn<0){txt=gasto+' ⚠ Así no alcanza: baja la velocidad.';cl='mal';}
+  else if(mn<5){txt=gasto+' ⚠ Muy justo: baja la velocidad.';cl='mal';}
+  else if(mn<10){txt=gasto+' Margen chico: maneja más suave.';cl='aviso';}
+  else{txt=gasto;cl='ok';}
+  e.textContent=txt;e.className='estado '+cl;
+}
+document.getElementById('filas').addEventListener('click',ev=>{
+  const b=ev.target.closest('button');if(!b)return;const t=+b.dataset.t,a=b.dataset.a;
+  const{soc}=calcular();
+  if(a==='v-')st.vel[t]=Math.max(30,st.vel[t]-5);
+  else if(a==='v+')st.vel[t]=Math.min(100,st.vel[t]+5);
+  else if(a==='c-'||a==='c+'){const base=st.real[t]!=null?st.real[t]:Math.round(soc[t]);st.real[t]=Math.max(0,Math.min(100,base+(a==='c+'?1:-1)));}
+  else if(a==='ok'){if(st.real[t]!=null){if(confirm('¿Borrar el dato real de este tramo?'))st.real[t]=null;}else st.real[t]=Math.max(0,Math.min(100,Math.round(soc[t])));}
+  guardar();pinta();
+});
+document.getElementById('reset').onclick=()=>{if(confirm('¿Borrar todas las velocidades y cargas que pusiste?')){st={vel:PLAN.slice(),real:Array(N).fill(null)};guardar();pinta();}};
+document.getElementById('tema').onclick=()=>{const r=document.documentElement;r.dataset.tema=r.dataset.tema==='oscuro'?'claro':'oscuro';try{localStorage.setItem(CLAVE+'-tema',r.dataset.tema)}catch(e){}};
+try{const t=localStorage.getItem(CLAVE+'-tema');if(t)document.documentElement.dataset.tema=t}catch(e){}
+function perfil(){const s=document.getElementById('perfil'),P=DATOS.perfil,W=s.clientWidth||340,H=150,L=50,R=8,T=24,B=8;
+  s.innerHTML='';s.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const x=k=>L+(W-L-R)*k/232.1,y=a=>T+(H-T-B)*(1-a/4200);const ns='http://www.w3.org/2000/svg';
+  const el=(n,a,txt)=>{const e=document.createElementNS(ns,n);for(const k in a)e.setAttribute(k,a[k]);if(txt)e.textContent=txt;s.appendChild(e);return e};
+  [[0,'0'],[2000,'2.000 m'],[4000,'4.000 m']].forEach(([a,t])=>{el('line',{x1:L,x2:W-R,y1:y(a),y2:y(a),stroke:'var(--borde)','stroke-width':1});el('text',{x:L-6,y:y(a)+4,'text-anchor':'end','font-size':11,fill:'var(--suave)'},t)});
+  const pts=P.map(p=>x(p[0]).toFixed(1)+','+y(Math.max(p[1],0)).toFixed(1)).join(' ');
+  el('polygon',{points:`${x(0)},${y(0)} ${pts} ${x(232.1)},${y(0)}`,fill:'var(--bat)','fill-opacity':.2});
+  el('polyline',{points:pts,fill:'none',stroke:'var(--bat)','stroke-width':2.5,'stroke-linejoin':'round'});
+  const alt=k=>P.reduce((a,b)=>Math.abs(b[0]-k)<Math.abs(a[0]-k)?b:a)[1];
+  [[104,'Bucay',-6,-4],[146,'Pallatanga',-6,-4],[232.1,'Riobamba',0,18]].forEach(([k,n,dx,dy])=>{el('circle',{cx:x(k),cy:y(alt(k)),r:4,fill:'var(--v45)',stroke:'var(--tarj)','stroke-width':2});el('text',{x:x(k)+dx,y:y(alt(k))+dy,'text-anchor':'end','font-size':11.5,'font-weight':700,fill:'var(--texto)'},n)});
+  el('circle',{cx:x(194.9),cy:y(3861),r:4.5,fill:'var(--v40)',stroke:'var(--tarj)','stroke-width':2});
+  el('text',{x:x(194.9)-8,y:y(3861)+4,'text-anchor':'end','font-size':11.5,'font-weight':800,fill:'var(--texto)'},'Cumbre 3.861 m');
+}
+perfil();let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(perfil,150)});
+pinta();
+if('serviceWorker' in navigator&&location.protocol.startsWith('http')){navigator.serviceWorker.register('sw.js').catch(()=>{});}
+</script>
+</body></html>
